@@ -45,6 +45,8 @@ mongoose.connect('mongodb://localhost:27017/Freelancing',{
 
     app.post('/api/auth/register', async (req, res) => {
         try{
+
+            console.log('REGISTER BODY:', req.body); 
     
             const {username, email, password, usertype} = req.body;
     
@@ -67,28 +69,29 @@ mongoose.connect('mongodb://localhost:27017/Freelancing',{
                 await newFreelancer.save();
             }
     
-            res.status(200).json(user);
+            res.status(200).json({user});
     
         }catch(err){
             res.status(500).json({error: err.message});
+            console.error('Registration error:', err); 
         }
     });
 
 
-    app.post('/login', async (req, res) =>{
-        try{
-            const {email, password} = req.body;
-            const user = await User.findOne({email:email});
-            if(!user) return res.status(400).json({msg: "User does not exist"});
-    
-            const isMatch = await bcrypt.compare(password, user.password);
-            if(!isMatch) return res.status(400).json({msg: "Invalid credentials"});
-                 
-            res.status(200).json(user);
-        }catch(err){
-            res.status(500).json({error: err.message});
-        }
-    });
+    app.post('/api/auth/login', async (req, res) => {
+    try {
+        const {email, password} = req.body;
+        const user = await User.findOne({email:email});
+        if(!user) return res.status(400).json({msg: "User does not exist"});
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch) return res.status(400).json({msg: "Invalid credentials"});
+             
+        res.status(200).json(user);
+    } catch(err) {
+        res.status(500).json({error: err.message});
+    }
+});
 
 
     app.get('/fetch-freelancer/:id', async(req, res)=>{

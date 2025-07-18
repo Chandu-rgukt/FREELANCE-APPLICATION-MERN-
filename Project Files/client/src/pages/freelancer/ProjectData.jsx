@@ -12,7 +12,7 @@ const ProjectData = () => {
 
   const [project, setProject] = useState();
   const [chats, setChats] = useState();
-
+  
   useEffect(() => {
     fetchProject(params['id']);
     joinSocketRoom();
@@ -22,8 +22,10 @@ const ProjectData = () => {
   const fetchProject = async (id) => {
     try {
       const response = await axios.get(`http://localhost:6001/fetch-project/${id}`);
+      
+
       setProject(response.data);
-      setProjectId(response.data.id);
+      
       setClientId(response.data.clientId);
       console.log(response.data);
     } catch (err) {
